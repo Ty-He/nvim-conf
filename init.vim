@@ -6,6 +6,7 @@ set shiftwidth=4
 set expandtab
 set smarttab
 
+
 " set leader key
 let mapleader = ","
 let g:mapleader = ","
@@ -20,16 +21,23 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'dracula/vim', {'as':'dracula'}
+Plug 'preservim/nerdcommenter'
+Plug 'luochen1990/rainbow'
 call plug#end()
 
 
 " ================ coc.nvim ====================
 
 " set a variable to manage coc-plug
-let g:coc_global_extensions = ['coc-json', 'coc-vimlsp', 'coc-clangd', 'coc-cmake', 'coc-sh']
+let g:coc_global_extensions = ['coc-json', 'coc-vimlsp', 'coc-clangd', 'coc-cmake', 'coc-sh', 'coc-go']
 
 " goto another file while the current file not save
 set hidden
+
+" close backup 
+set nobackup
+set nowritebackup
+
 
 " update time
 set updatetime=100
@@ -62,7 +70,8 @@ inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 
 
 " show all completion infomation
-inoremap <silent><<expr> <C-o> coc#refresh()
+inoremap <silent><<expr><C-space> coc#refresh()
+
 
 " goto error-code
 nmap <silent> [g <Plug>(coc-diagnostic-prev)
@@ -75,21 +84,124 @@ nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
 " show documentatino in preview window
-nnoremap <Silent> K :call <SID>show_documentation()<CR>
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+nnoremap <silent> H :call CocActionAsync('doHover')<CR> 
 
 function! s:show_documentation()
     if (index(['vim', 'help'], &filetype) >= 0)
         execute 'h '.expand('doHover')
     else 
-		call CocACtion('doHover')
+	    call CocAction('doHover')
+    " endif
+    " if CocAction('hasProvider', 'hover')
+    "     call CocActionAsync('doHover')
+    " else
+    "     call feedkeys('K', 'in')
     endif
 endfunction
 
 " highlight all word which is same to select
-auto CursorHold * silent call CocActionAsync('highlight')
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" inoremap <silent><expr> <C-Space> pumvisible() ? coc#select_confirm() : "\<C-R>=coc#rpc#request('doKeymap', ['snippets-expand-jump']\<CR>)"
+" nnoremap <silent><expr> <C-Space> pumvisible() ? coc#select_confirm() : "\<C-R>=coc#rpc#request('doKeymap', ['snippets-expand-jump']\<CR>)"
+" xnoremap <silent><expr> <C-Space> coc#refresh()
+nmap <silent> Q: call CocActionAsync('doHover')<CR>
 
 " ...
 "
+
+" Symbol renaming
+nmap <leader>rn <Plug>(coc-rename)
+" nmap <leader>c <Plug>(documentSymbol)
+
+" Formatting selected code
+xmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
+
+augroup mygroup
+  autocmd!
+  " Setup formatexpr specified filetype(s)
+  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  " Update signature help on jump placeholder
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup end
+
+" Applying code actions to the selected code block
+" Example: `<leader>aap` for current paragraph
+xmap <leader>a  <Plug>(coc-codeaction-selected)
+nmap <leader>a  <Plug>(coc-codeaction-selected)
+
+" Remap keys for applying code actions at the cursor position
+nmap <leader>ac  <Plug>(coc-codeaction-cursor)
+" Remap keys for apply code actions affect whole buffer
+nmap <leader>as  <Plug>(coc-codeaction-source)
+" Apply the most preferred quickfix action to fix diagnostic on the current line
+nmap <leader>qf  <Plug>(coc-fix-current)
+
+" Remap keys for applying refactor code actions
+nmap <silent> <leader>re <Plug>(coc-codeaction-refactor)
+xmap <silent> <leader>r  <Plug>(coc-codeaction-refactor-selected)
+nmap <silent> <leader>r  <Plug>(coc-codeaction-refactor-selected)
+
+" Run the Code Lens action on the current line
+nmap <leader>cl  <Plug>(coc-codelens-action)
+
+" Map function and class text objects
+" NOTE: Requires 'textDocument.documentSymbol' support from the language server
+xmap if <Plug>(coc-funcobj-i)
+omap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap af <Plug>(coc-funcobj-a)
+xmap ic <Plug>(coc-classobj-i)
+omap ic <Plug>(coc-classobj-i)
+xmap ac <Plug>(coc-classobj-a)
+omap ac <Plug>(coc-classobj-a)
+
+" Remap <C-f> and <C-b> to scroll float windows/popups
+nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+
+" Use CTRL-S for selections ranges
+" Requires 'textDocument/selectionRange' support of language server
+nmap <silent> <C-s> <Plug>(coc-range-select)
+xmap <silent> <C-s> <Plug>(coc-range-select)
+
+" Add `:Format` command to format current buffer
+command! -nargs=0 Format :call CocActionAsync('format')
+
+" Add `:Fold` command to fold current buffer
+command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+
+" Add `:OR` command for organize imports of the current buffer
+command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.organizeImport')
+
+" Add (Neo)Vim's native statusline support
+" NOTE: Please see `:h coc-status` for integrations with external plugins that
+" provide custom statusline: lightline.vim, vim-airline
+set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+
+" Mappings for CoCList
+" Show all diagnostics
+nnoremap <silent><nowait> <space>a  :<C-u>CocList diagnostics<cr>
+" Manage extensions
+nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
+" Show commands
+nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
+" Find symbol of current document
+nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
+" Search workspace symbols
+nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
+" Do default action for next item
+nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
+" Do default action for previous item
+nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
+" Resume latest coc list
+nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
 "================== nerdtree ======================
 " window size
@@ -176,6 +288,7 @@ let g:airline_theme = 'violet'
 " let g:airline_right_sep = '◀'
 " let g:airline_right_alt_sep = '❮'
 let g:airline_symbols.linenr = '¶'
+" let g:airline_symbols.linenr = 'ln'
 let g:airline_symbols.branch = '⎇'
 
 " set guifont=PowelineSymbols
@@ -192,3 +305,58 @@ set cursorline
 hi CocMenuSel ctermfg=DarkGrey ctermbg=DarkCyan
 hi CocSearch ctermfg=Yellow
 " set guifont=PowerlineSymbols
+
+
+" ==============  commenter ====================
+let g:NERDCreateDefaultMappings = 0
+" add spaces when commenting
+let g:NERDSpaceDelims = 1
+
+" for beauty
+let g:NERDCompactSexyComs = 1 
+" 
+let g:NERDDefaultAlign = 'left'
+let g:NERDCommentEmptyLines = 1
+
+let g:NERDCustomDelimiters = {
+            \ 'c' : {'left' : '//'},
+            \ 'cpp' : {'left' : '//'},
+            \ 'go' : {'left' : '//'}
+            \}
+
+" remove space when uncommenting
+let g:NERDTrimTrailingWhitespace = 1
+" 
+let g:NERDTogglecCheckAllLines = 1
+
+noremap gcc :call nerdcommenter#Comment(0, "toggle")<C-m>
+vnoremap gc :call nerdcommenter#Comment(0, "toggle")<C-m>
+" =================== rainbow ==============================
+
+let g:rainbow_active = 1
+
+
+let g:rainbow_conf = {
+            \	'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick'],
+	        \	'ctermfgs': ['lightblue', 'lightyellow', 'lightcyan', 'lightmagenta'],
+	        \	'operators': '_,_',
+	        \	'parentheses': ['start=/(/ end=/)/ fold', 'start=/\[/ end=/\]/ fold', 'start=/{/ end=/}/ fold'],
+	        \	'separately': {
+	        \		'*': {},
+	        \		'tex': {
+	        \			'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/'],
+	        \		},
+	        \		'lisp': {
+	        \			'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick', 'darkorchid3'],
+	        \		},
+	        \		'vim': {
+	        \			'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/', 'start=/{/ end=/}/ fold', 'start=/(/ end=/)/ containedin=vimFuncBody', 'start=/\[/ end=/\]/ containedin=vimFuncBody', 'start=/{/ end=/}/ fold containedin=vimFuncBody'],
+	        \		},
+	        \		'html': {
+	        \			'parentheses': ['start=/\v\<((area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr)[ >])@!\z([-_:a-zA-Z0-9]+)(\s+[-_:a-zA-Z0-9]+(\=("[^"]*"|'."'".'[^'."'".']*'."'".'|[^ '."'".'"><=`]*))?)*\>/ end=#</\z1># fold'],
+	        \		},
+	        \		'css': 0,
+	        \		'nerdtree': 0, 
+	        \	}
+	        \}
+
