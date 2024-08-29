@@ -37,5 +37,16 @@
     },
     "go.goplsOptions": {
         "staticcheck": true
-    }
+    },
+    "semanticTokens.enable": true,
+
+    "inlayHint.enable": false,
+    "inlayHint.enableParameter": false,
+    "inlayHint.display": false,
+    "clangd.arguments": [
+        "--background-index",
+        "--completion-style=detailed",
+        "--function-arg-placeholders=0",
+        "--header-insertion=never"
+    ]
 }

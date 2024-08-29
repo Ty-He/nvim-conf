@@ -11,6 +11,20 @@ set smarttab
 let mapleader = ","
 let g:mapleader = ","
 
+" set goto the front and back of line 
+noremap ; 0
+noremap ' $
+
+" exit Search highlight
+noremap <leader><space> :nohlsearch<CR>
+
+" mutilply screen
+noremap sh <C-w>h
+noremap sj <C-w>j
+noremap sk <C-w>k
+noremap sl <C-w>l
+
+
 " =============== vim-plug ====================
 call plug#begin('~/.local/share/nvim/plugged')
 " Plug 'itchyny/lightline.vim'
@@ -70,7 +84,7 @@ inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 
 
 " show all completion infomation
-inoremap <silent><<expr><C-space> coc#refresh()
+inoremap <silent><expr><C-space> coc#refresh()
 
 
 " goto error-code
@@ -360,3 +374,7 @@ let g:rainbow_conf = {
 	        \	}
 	        \}
 
+
+" =================== auto-pairs ==========================
+"
+" let g:AutoPairs = { '(' : ')', '[' : ']' , '{' : '}', '"' : '"', '`' : '`' , "'" : "''", '<' : '>' }
