@@ -6,7 +6,6 @@ set shiftwidth=4
 set expandtab
 set smarttab
 
-
 " set leader key
 let mapleader = ","
 let g:mapleader = ","
@@ -23,6 +22,9 @@ noremap sh <C-w>h
 noremap sj <C-w>j
 noremap sk <C-w>k
 noremap sl <C-w>l
+
+" tab for command
+set ignorecase
 
 
 " =============== vim-plug ====================
@@ -44,6 +46,9 @@ call plug#end()
 
 " set a variable to manage coc-plug
 let g:coc_global_extensions = ['coc-json', 'coc-vimlsp', 'coc-clangd', 'coc-cmake', 'coc-sh', 'coc-go']
+
+" no need hidden \" in json
+let g:vim_json_conceal=0
 
 " goto another file while the current file not save
 set hidden
@@ -251,6 +256,7 @@ let g:indent_guides_start_level=2
 " ==================== airline ==========================
 " set status-line
 let g:airline#extensions#tabline#enabled=1
+" let g:airline#extensions#branch#enabled = 1 
 let g:airline#extensions#tabline#left_alt_seq='|'
 let g:airline#extensions#tabline#buffer_nr_show=0
 let g:airline#extensions#tabline#formatter='default'
@@ -290,12 +296,11 @@ if !exists('g:airline_symbols')
 endif
 " current line for mouse
 " let g:airline_symbols.linenr="Row"
-let g:airline_symbols.whitespace='|'
+" let g:airline_symbols.whitespace='|'
 
 " support powerline font
 let g:airline_powerline_fonts=1
 " set themes, powerline-font need some theme
-let g:airline_theme = 'violet'
 " some symbols
 " let g:airline_left_sep = '▶'
 " let g:airline_left_alt_sep ='❯'
@@ -307,8 +312,42 @@ let g:airline_symbols.branch = '⎇'
 
 " set guifont=PowelineSymbols
 
+let g:airline#extensions#whitespace#enabled = 0
+let g:airline#extensions#wordcount#enabled = 0
+
+" let g:airline#parts#left#1 = 'a'
+" let g:airline#parts#left#1 = 'b'
+" let g:airline#parts#right#1 = 'x'
+
+
 "================ neovim theme ==============
+" dark theme and is default 
 colorscheme dracula 
+let g:airline_theme = 'violet'
+
+" light theme
+" colorscheme morning
+" let g:airline_theme = 'papercolor'
+
+function! SetTheme(mode) 
+    if a:mode ==# 'light' 
+        execute 'colorscheme morning'
+        " let g:airline_theme = 'papercolor'
+        execute 'AirlineTheme papercolor'
+    elseif a:mode ==# 'dark' 
+        execute 'colorscheme dracula'
+        " let g:airline_theme = 'violet'
+        execute 'AirlineTheme violet'
+    else 
+        echo "Invalid mode! Use 'light' or 'dark'."
+    endif
+endfunction
+
+
+command! -nargs=1 Theme :call SetTheme (<f-args>)
+command! -nargs=0 Light :call SetTheme('light')
+command! -nargs=0 Dark :call SetTheme('dark')
+
 
 " 
 " highlight current line
@@ -347,7 +386,7 @@ noremap gcc :call nerdcommenter#Comment(0, "toggle")<C-m>
 vnoremap gc :call nerdcommenter#Comment(0, "toggle")<C-m>
 " =================== rainbow ==============================
 
-let g:rainbow_active = 1
+let g:rainbow_active = 0
 
 
 let g:rainbow_conf = {
@@ -378,3 +417,25 @@ let g:rainbow_conf = {
 " =================== auto-pairs ==========================
 "
 " let g:AutoPairs = { '(' : ')', '[' : ']' , '{' : '}', '"' : '"', '`' : '`' , "'" : "''", '<' : '>' }
+
+
+" ================== nvim float terminal ===================
+"
+function! OpenFloatingTerminal()
+    let buf = nvim_create_buf(0, 1)
+    let opts = {
+                \ 'relative': 'editor',
+                \ 'width': 80,
+                \ 'height': 20,
+                \ 'row': 2,
+                \ 'col': 30,
+                \ 'border': 'rounded',
+                \}
+    call nvim_open_win(buf, 1, opts)
+    call termopen("bash")
+    startinsert
+endfunction
+
+command! -nargs=0 FloatTerminal :call OpenFloatingTerminal() 
+nnoremap <leader>t :FloatTerminal<CR>
+tnoremap <Esc> <C-\><C-n>
