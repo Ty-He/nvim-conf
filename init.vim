@@ -6,6 +6,7 @@ set shiftwidth=4
 set expandtab
 set smarttab
 
+
 " set leader key
 let mapleader = ","
 let g:mapleader = ","
@@ -104,7 +105,7 @@ nmap <silent> gr <Plug>(coc-references)
 
 " show documentatino in preview window
 nnoremap <silent> K :call <SID>show_documentation()<CR>
-nnoremap <silent> H :call CocActionAsync('doHover')<CR> 
+nnoremap <silent> <leader>h :call CocActionAsync('doHover')<CR> 
 
 function! s:show_documentation()
     if (index(['vim', 'help'], &filetype) >= 0)
@@ -135,7 +136,6 @@ nmap <leader>rn <Plug>(coc-rename)
 " nmap <leader>c <Plug>(documentSymbol)
 
 " Formatting selected code
-xmap <leader>f  <Plug>(coc-format-selected)
 nmap <leader>f  <Plug>(coc-format-selected)
 
 augroup mygroup
@@ -189,6 +189,7 @@ vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(
 " Requires 'textDocument/selectionRange' support of language server
 nmap <silent> <C-s> <Plug>(coc-range-select)
 xmap <silent> <C-s> <Plug>(coc-range-select)
+
 
 " Add `:Format` command to format current buffer
 command! -nargs=0 Format :call CocActionAsync('format')
@@ -322,22 +323,60 @@ let g:airline#extensions#wordcount#enabled = 0
 
 "================ neovim theme ==============
 " dark theme and is default 
-colorscheme dracula 
-let g:airline_theme = 'violet'
+" colorscheme dracula
+" let g:airline_theme = 'violet'
 
 " light theme
 " colorscheme morning
 " let g:airline_theme = 'papercolor'
 
+function! LightColor() 
+    execute 'highlight CocMenuSel ctermbg=LightBlue guibg=#A7C7E7 ctermfg=DarkBlue guifg=#000000'
+    execute 'highlight CocFloating ctermbg=Grey guibg=#BFB3B5 ctermfg=Black guifg=#333333'
+endfunction
+
+function! DarkColor()
+    execute 'highlight CocMenuSel ctermbg=94 guibg=#6A4C93 ctermfg=DarkGrey guifg=#FFD700'
+    execute 'highlight CocFloating ctermbg=Grey guibg=#2B2455 ctermfg=White guifg=#E0E0E0'
+endfunction
+
+function! InitTheme(mode) 
+    if a:mode ==# 'light' 
+        execute 'colorscheme morning'
+        let g:airline_theme = 'papercolor'
+        let g:current_theme = 'light'
+        call LightColor()
+    elseif a:mode ==# 'dark' 
+        execute 'colorscheme dracula'
+        let g:airline_theme = 'violet'
+        let g:current_theme = 'dark'
+        call DarkColor()
+    else 
+        echo "Invalid mode! Use 'light' or 'dark'."
+    endif
+endfunction
+
+if filereadable(expand("~/.config/nvim/theme_mode"))
+    let g:current_theme = readfile(expand("~/.config/nvim/theme_mode"))[0]
+else 
+    let g:current_theme = 'dark'
+endif
+
+call InitTheme(g:current_theme)
+
+autocmd VimLeave * call writefile([g:current_theme], expand("~/.config/nvim/theme_mode"))
+
 function! SetTheme(mode) 
     if a:mode ==# 'light' 
         execute 'colorscheme morning'
-        " let g:airline_theme = 'papercolor'
         execute 'AirlineTheme papercolor'
+        call LightColor()
+        let g:current_theme = 'light'
     elseif a:mode ==# 'dark' 
         execute 'colorscheme dracula'
-        " let g:airline_theme = 'violet'
         execute 'AirlineTheme violet'
+        call DarkColor()
+        let g:current_theme = 'dark'
     else 
         echo "Invalid mode! Use 'light' or 'dark'."
     endif
@@ -349,15 +388,11 @@ command! -nargs=0 Light :call SetTheme('light')
 command! -nargs=0 Dark :call SetTheme('dark')
 
 
+
 " 
 " highlight current line
 set cursorline 
-" hi PMenu ctermfg=40 ctermbg=0
-" hi PMenuSel ctermfg=0 ctermbg=4
-" hi CocHighlightText ctermfg=40 ctermbg=0
-hi CocMenuSel ctermfg=DarkGrey ctermbg=DarkCyan
-hi CocSearch ctermfg=Yellow
-" set guifont=PowerlineSymbols
+" highlight CocMenuExtra ctermfg=235 guibg=#3C3C3C
 
 
 " ==============  commenter ====================
@@ -421,6 +456,7 @@ let g:rainbow_conf = {
 
 " ================== nvim float terminal ===================
 "
+
 function! OpenFloatingTerminal()
     let buf = nvim_create_buf(0, 1)
     let opts = {

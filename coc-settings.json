@@ -33,11 +33,13 @@
     "hover.target": "float",
     "hover.floatConfig": {
         "border": true,
-        "highlight": "NormalFloat"
+        "rounded": true
     },
     "go.goplsOptions": {
-        "staticcheck": true
+        "staticcheck": true,
+        // "semanticTokens": true 
     },
+    "go.checkForUpdates": "disabled",
     "semanticTokens.enable": true,
 
     "inlayHint.enable": false,
@@ -48,5 +50,6 @@
         "--completion-style=detailed",
         "--function-arg-placeholders=0",
         "--header-insertion=never"
-    ]
+    ],
+    "colors.enable": true
 }
