@@ -1,11 +1,10 @@
 set nu
 
 " set tab width
-set tabstop=4
-set shiftwidth=4
+set tabstop=2
+set shiftwidth=2
 set expandtab
 set smarttab
-
 
 " set leader key
 let mapleader = ","
@@ -27,6 +26,14 @@ noremap sl <C-w>l
 " tab for command
 set ignorecase
 
+syntax enable
+syntax on
+
+" indent
+set autoindent
+set smartindent
+" C++ namespace no indent
+set cinoptions+=g0,N-s 
 
 " =============== vim-plug ====================
 call plug#begin('~/.local/share/nvim/plugged')
@@ -34,19 +41,18 @@ call plug#begin('~/.local/share/nvim/plugged')
 Plug 'neoclide/coc.nvim', {'brance': 'release'}
 Plug 'preservim/nerdtree'
 Plug 'Yggdroot/indentLine'
-Plug 'jiangmiao/auto-pairs'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'dracula/vim', {'as':'dracula'}
 Plug 'preservim/nerdcommenter'
-Plug 'luochen1990/rainbow'
 call plug#end()
 
 
 " ================ coc.nvim ====================
 
 " set a variable to manage coc-plug
-let g:coc_global_extensions = ['coc-json', 'coc-vimlsp', 'coc-clangd', 'coc-cmake', 'coc-sh', 'coc-go']
+" let g:coc_global_extensions = ['coc-json', 'coc-vimlsp', 'coc-clangd', 'coc-cmake', 'coc-sh', 'coc-go']
+let g:coc_global_extensions = ['coc-json', 'coc-vimlsp', 'coc-clangd', 'coc-cmake', 'coc-sh', 'coc-pairs']
 
 " no need hidden \" in json
 let g:vim_json_conceal=0
@@ -223,6 +229,37 @@ nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
+
+" pairs enter enhance 
+
+function! IsCppAndLastCharIsGreater()
+  " 判断文件类型是否为 C++
+  if &filetype != 'cpp'
+    return 0
+  endif
+
+  " 获取当前行内容
+  let l:current_line = getline('.')
+
+  " 判断最后一个非空字符
+  let l:last_nonempty = ''
+  for l:char in reverse(split(l:current_line, '\zs'))
+    if l:char != ' ' && l:char != ''
+      let l:last_nonempty = l:char
+      break
+    endif
+  endfor
+
+  " 检查最后一个非空字符是否为 '>'
+  return l:last_nonempty == '>' ? 1 : 0
+endfunction
+
+function! EscapeIndent()
+  execute "normal! <<"
+endfunction
+
+inoremap <silent><expr> <CR> "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
 "================== nerdtree ======================
 " window size
 let g:NERDTreeWinSize=25
@@ -330,19 +367,21 @@ let g:airline#extensions#wordcount#enabled = 0
 " colorscheme morning
 " let g:airline_theme = 'papercolor'
 
+
+" light theme from: github.com/wimstefan/Lightning
 function! LightColor() 
-    execute 'highlight CocMenuSel ctermbg=LightBlue guibg=#A7C7E7 ctermfg=DarkBlue guifg=#000000'
-    execute 'highlight CocFloating ctermbg=Grey guibg=#BFB3B5 ctermfg=Black guifg=#333333'
+    execute 'highlight CocMenuSel ctermbg=LightGreen guibg=#A7C7E7 ctermfg=DarkBlue guifg=#000000'
+    execute 'highlight CocFloating ctermbg=DarkCyan guibg=#BFB3B5 ctermfg=Black guifg=#333333'
 endfunction
 
 function! DarkColor()
-    execute 'highlight CocMenuSel ctermbg=94 guibg=#6A4C93 ctermfg=DarkGrey guifg=#FFD700'
-    execute 'highlight CocFloating ctermbg=Grey guibg=#2B2455 ctermfg=White guifg=#E0E0E0'
+    execute 'highlight CocMenuSel ctermbg=DarkMagenta guibg=#6A4C93 ctermfg=LightCyan guifg=#FFD700'
+    execute 'highlight CocFloating ctermbg=Black guibg=#2B2455 ctermfg=Yellow guifg=#E0E0E0'
 endfunction
 
 function! InitTheme(mode) 
     if a:mode ==# 'light' 
-        execute 'colorscheme morning'
+        execute 'colorscheme lightning'
         let g:airline_theme = 'papercolor'
         let g:current_theme = 'light'
         call LightColor()
@@ -368,7 +407,7 @@ autocmd VimLeave * call writefile([g:current_theme], expand("~/.config/nvim/them
 
 function! SetTheme(mode) 
     if a:mode ==# 'light' 
-        execute 'colorscheme morning'
+        execute 'colorscheme lightning'
         execute 'AirlineTheme papercolor'
         call LightColor()
         let g:current_theme = 'light'
@@ -419,40 +458,6 @@ let g:NERDTogglecCheckAllLines = 1
 
 noremap gcc :call nerdcommenter#Comment(0, "toggle")<C-m>
 vnoremap gc :call nerdcommenter#Comment(0, "toggle")<C-m>
-" =================== rainbow ==============================
-
-let g:rainbow_active = 0
-
-
-let g:rainbow_conf = {
-            \	'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick'],
-	        \	'ctermfgs': ['lightblue', 'lightyellow', 'lightcyan', 'lightmagenta'],
-	        \	'operators': '_,_',
-	        \	'parentheses': ['start=/(/ end=/)/ fold', 'start=/\[/ end=/\]/ fold', 'start=/{/ end=/}/ fold'],
-	        \	'separately': {
-	        \		'*': {},
-	        \		'tex': {
-	        \			'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/'],
-	        \		},
-	        \		'lisp': {
-	        \			'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick', 'darkorchid3'],
-	        \		},
-	        \		'vim': {
-	        \			'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/', 'start=/{/ end=/}/ fold', 'start=/(/ end=/)/ containedin=vimFuncBody', 'start=/\[/ end=/\]/ containedin=vimFuncBody', 'start=/{/ end=/}/ fold containedin=vimFuncBody'],
-	        \		},
-	        \		'html': {
-	        \			'parentheses': ['start=/\v\<((area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr)[ >])@!\z([-_:a-zA-Z0-9]+)(\s+[-_:a-zA-Z0-9]+(\=("[^"]*"|'."'".'[^'."'".']*'."'".'|[^ '."'".'"><=`]*))?)*\>/ end=#</\z1># fold'],
-	        \		},
-	        \		'css': 0,
-	        \		'nerdtree': 0, 
-	        \	}
-	        \}
-
-
-" =================== auto-pairs ==========================
-"
-" let g:AutoPairs = { '(' : ')', '[' : ']' , '{' : '}', '"' : '"', '`' : '`' , "'" : "''", '<' : '>' }
-
 
 " ================== nvim float terminal ===================
 "

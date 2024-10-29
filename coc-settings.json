@@ -52,4 +52,5 @@
         "--header-insertion=never"
     ],
     "colors.enable": true
+    // "coc.preferences.formatOnType": true
 }
