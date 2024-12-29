@@ -51,6 +51,20 @@
         "--function-arg-placeholders=0",
         "--header-insertion=never"
     ],
-    "colors.enable": true
+    "colors.enable": true,
     // "coc.preferences.formatOnType": true
+    "list.floatPreview": true,
+    // <Esc> <C-s> <C-j/k> <C-f/b> <Tab> <CR>
+    "list.insertMappings": {
+      "<C-p>": "do:previewtoggle",
+      "<C-u>": "do:previewup",
+      "<C-d>": "do:previewdown",
+      "<C-r>": "do:refresh",
+      "<C-h>": "do:help"
+    },
+    "session.saveOnVimLeave": false,
+    "list.source.files.command": "rg",
+    "list.source.files.args": ["--files", "--hidden", "--glob", "!**/.git/*"],
+    "list.source.mru.maxLength": 25,
+    "list.source.grep.defaultOptions": ["--interactive", "--auto-preview"]
 }

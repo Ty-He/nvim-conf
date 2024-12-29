@@ -18,10 +18,10 @@ noremap ' $
 noremap <leader><space> :nohlsearch<CR>
 
 " mutilply screen
-noremap sh <C-w>h
-noremap sj <C-w>j
-noremap sk <C-w>k
-noremap sl <C-w>l
+noremap <A-h> <C-w>h
+noremap <A-j> <C-w>j
+noremap <A-k> <C-w>k
+noremap <A-l> <C-w>l
 
 " tab for command
 set ignorecase
@@ -52,7 +52,14 @@ call plug#end()
 
 " set a variable to manage coc-plug
 " let g:coc_global_extensions = ['coc-json', 'coc-vimlsp', 'coc-clangd', 'coc-cmake', 'coc-sh', 'coc-go']
-let g:coc_global_extensions = ['coc-json', 'coc-vimlsp', 'coc-clangd', 'coc-cmake', 'coc-sh', 'coc-pairs']
+let g:coc_global_extensions = [
+      \'coc-json', 
+      \ 'coc-vimlsp', 
+      \ 'coc-clangd', 
+      \'coc-cmake', 
+      \'coc-sh', 
+      \'coc-pairs', 
+      \'coc-lists']
 
 " no need hidden \" in json
 let g:vim_json_conceal=0
@@ -228,6 +235,12 @@ nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
 nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
+" Show files
+nnoremap <silent><nowait> <space>f  :<C-u>CocList files<CR>
+" grep
+nnoremap <silent><nowait> <space>g  :<C-u>CocList grep<CR>
+" mru
+nnoremap <silent><nowait> <space>m  :<C-u>CocList mru<CR>
 
 
 " pairs enter enhance 
@@ -324,7 +337,8 @@ nmap <leader>7 <Plug>AirlineSelectTab7
 nmap <leader>8 <Plug>AirlineSelectTab8
 nmap <leader>9 <Plug>AirlineSelectTab9
 " <leader> +/- to next/prev tab
-nmap <leader>+ <Plug>AirlineSelectNextTab
+" + is not convenient
+nmap <leader>= <Plug>AirlineSelectNextTab 
 nmap <leader>- <Plug>AirlineSelectPrevTab
 " <leader> q for quit
 nmap <leader>q :bp<cr>:bd #<cr>
