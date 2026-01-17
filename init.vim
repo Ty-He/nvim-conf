@@ -2,8 +2,9 @@ set nu
 
 " set tab width
 set tabstop=2
+set softtabstop=2
 set shiftwidth=2
-set expandtab
+" set expandtab
 set smarttab
 
 " set leader key
@@ -31,7 +32,8 @@ syntax on
 
 " indent
 set autoindent
-set smartindent
+" set smartindent
+set cindent
 " C++ namespace no indent
 set cinoptions+=g0,N-s 
 
@@ -45,6 +47,7 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'dracula/vim', {'as':'dracula'}
 Plug 'preservim/nerdcommenter'
+Plug 'catppuccin/nvim', {'as': 'catppuccin'}
 call plug#end()
 
 
@@ -59,7 +62,11 @@ let g:coc_global_extensions = [
       \'coc-cmake', 
       \'coc-sh', 
       \'coc-pairs', 
-      \'coc-lists']
+      \'coc-lists',
+			\'coc-highlight']
+"			\'coc-html',
+"			\'coc-tsserver']
+"			\'coc-eslint']
 
 " no need hidden \" in json
 let g:vim_json_conceal=0
@@ -216,7 +223,7 @@ command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.org
 " Add (Neo)Vim's native statusline support
 " NOTE: Please see `:h coc-status` for integrations with external plugins that
 " provide custom statusline: lightline.vim, vim-airline
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+" set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 " Mappings for CoCList
 " Show all diagnostics
@@ -371,6 +378,21 @@ let g:airline#extensions#wordcount#enabled = 0
 " let g:airline#parts#left#1 = 'b'
 " let g:airline#parts#right#1 = 'x'
 
+" * enable/disable coc integration >
+let g:airline#extensions#coc#enabled = 1
+" * change error symbol: >
+let g:airline#extensions#coc#error_symbol = 'E:'
+
+" * change warning symbol: >
+let g:airline#extensions#coc#warning_symbol = 'W:'
+" * enable/disable coc status display >
+let g:airline#extensions#coc#show_coc_status = 0
+
+" change the error format (%C - error count, %L - line number): >
+let g:airline#extensions#coc#stl_format_err = '%C(L%L)'
+
+" * change the warning format (%C - error count, %L - line number): >
+let g:airline#extensions#coc#stl_format_warn = '%C(L%L)'
 
 "================ neovim theme ==============
 " dark theme and is default 
@@ -384,24 +406,30 @@ let g:airline#extensions#wordcount#enabled = 0
 
 " light theme from: github.com/wimstefan/Lightning
 function! LightColor() 
-    execute 'highlight CocMenuSel ctermbg=LightGreen guibg=#A7C7E7 ctermfg=DarkBlue guifg=#000000'
-    execute 'highlight CocFloating ctermbg=DarkCyan guibg=#BFB3B5 ctermfg=Black guifg=#333333'
+    "execute 'highlight CocMenuSel ctermbg=LightGreen guibg=#A7C7E7 ctermfg=DarkBlue guifg=#000000'
+    "execute 'highlight CocFloating ctermbg=DarkCyan guibg=#BFB3B5 ctermfg=Black guifg=#333333'
 endfunction
 
 function! DarkColor()
-    execute 'highlight CocMenuSel ctermbg=DarkMagenta guibg=#6A4C93 ctermfg=LightCyan guifg=#FFD700'
-    execute 'highlight CocFloating ctermbg=Black guibg=#2B2455 ctermfg=Yellow guifg=#E0E0E0'
+    "execute 'highlight CocMenuSel ctermbg=DarkMagenta guibg=#6A4C93 ctermfg=LightCyan guifg=#FFD700'
+    "execute 'highlight CocFloating ctermbg=Black guibg=#2B2455 ctermfg=Yellow guifg=#E0E0E0'
+		" for transparent backgourd
+		"hi Normal guibg=NONE ctermfg=NONE
 endfunction
 
 function! InitTheme(mode) 
     if a:mode ==# 'light' 
-        execute 'colorscheme lightning'
-        let g:airline_theme = 'papercolor'
+        "execute 'colorscheme lightning'
+        "let g:airline_theme = 'papercolor'
+        execute 'colorscheme catppuccin-latte'
+        let g:airline_theme = 'catppuccin'
         let g:current_theme = 'light'
         call LightColor()
     elseif a:mode ==# 'dark' 
-        execute 'colorscheme dracula'
-        let g:airline_theme = 'violet'
+        " execute 'colorscheme dracula'
+        "let g:airline_theme = 'violet'
+        execute 'colorscheme catppuccin-mocha'
+        let g:airline_theme = 'catppuccin'
         let g:current_theme = 'dark'
         call DarkColor()
     else 
@@ -415,19 +443,18 @@ else
     let g:current_theme = 'dark'
 endif
 
-call InitTheme(g:current_theme)
-
-autocmd VimLeave * call writefile([g:current_theme], expand("~/.config/nvim/theme_mode"))
 
 function! SetTheme(mode) 
     if a:mode ==# 'light' 
-        execute 'colorscheme lightning'
-        execute 'AirlineTheme papercolor'
+        "execute 'colorscheme lightning'
+        execute 'colorscheme catppuccin-frappe'
+        execute 'AirlineTheme catppuccin'
         call LightColor()
         let g:current_theme = 'light'
     elseif a:mode ==# 'dark' 
-        execute 'colorscheme dracula'
-        execute 'AirlineTheme violet'
+        "execute 'colorscheme dracula'
+        execute 'colorscheme catppuccin-mocha'
+        execute 'AirlineTheme catppuccin'
         call DarkColor()
         let g:current_theme = 'dark'
     else 
@@ -440,6 +467,51 @@ command! -nargs=1 Theme :call SetTheme (<f-args>)
 command! -nargs=0 Light :call SetTheme('light')
 command! -nargs=0 Dark :call SetTheme('dark')
 
+lua << EOF
+    require("catppuccin").setup({
+        -- flavour = "auto", -- latte, frappe, macchiato, mocha
+        --background = { -- :h background
+        --    light = "latte",
+        --    dark = "mocha",
+        --},
+        transparent_background = true, -- disables setting the background color.
+        show_end_of_buffer = false, -- shows the '~' characters after the end of buffers
+        term_colors = false, -- sets terminal colors (e.g. `g:terminal_color_0`)
+        dim_inactive = {
+            enabled = false, -- dims the background color of inactive window
+            shade = "dark",
+            percentage = 0.15, -- percentage of the shade to apply to the inactive window
+        },
+        styles = { -- Handles the styles of general hi groups (see `:h highlight-args`):
+            comments = { "italic" }, -- Change the style of comments
+            conditionals = { "italic" },
+            loops = {},
+            functions = {},
+            keywords = {},
+            strings = {},
+            variables = {},
+            numbers = {},
+            booleans = {},
+            properties = {},
+            types = {},
+            operators = {},
+            -- miscs = {}, -- Uncomment to turn off hard-coded styles
+        },
+        color_overrides = {},
+        custom_highlights = {},
+        default_integrations = false,
+        integrations = {
+            -- notify = false,
+						coc_nvim = true,
+            -- For more plugins integrations please scroll down (https://github.com/catppuccin/nvim#integrations)
+        },
+    })
+EOF
+
+" NOTE call after lua chunk, unless setup don not work
+call InitTheme(g:current_theme)
+
+autocmd VimLeave * call writefile([g:current_theme], expand("~/.config/nvim/theme_mode"))
 
 
 " 
@@ -494,3 +566,14 @@ endfunction
 command! -nargs=0 FloatTerminal :call OpenFloatingTerminal() 
 nnoremap <leader>t :FloatTerminal<CR>
 tnoremap <Esc> <C-\><C-n>
+
+" hi StatusLine guibg=NONE ctermfg=NONE
+" hi Tabline guibg=NONE ctermfg=NONE
+
+nnoremap <silent> <C-i> :call CocAction('runCommand', 'editor.action.organizeImport')<CR> 
+
+"highlight @function guifg=#fad000 ctermfg=Yellow
+"highlight @keyword guifg=#b188ea " ctermfg=#b188ea
+" highlight @comment guifg=#fdfcfb
+" highlight @variable guifg=#9effff
+

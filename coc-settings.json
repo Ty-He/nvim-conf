@@ -37,7 +37,9 @@
     },
     "go.goplsOptions": {
         "staticcheck": true,
-        // "semanticTokens": true 
+        "semanticTokens": true,
+				"completeUnimported": true,
+				"deepCompletion": true
     },
     "go.checkForUpdates": "disabled",
     "semanticTokens.enable": true,
@@ -66,5 +68,20 @@
     "list.source.files.command": "rg",
     "list.source.files.args": ["--files", "--hidden", "--glob", "!**/.git/*"],
     "list.source.mru.maxLength": 25,
-    "list.source.grep.defaultOptions": ["--interactive", "--auto-preview"]
+    "list.source.grep.defaultOptions": ["--interactive", "--auto-preview"],
+
+    "languageserver": {
+      "proto": {
+        "command": "protobuf-language-server",
+        "filetypes": ["proto"],
+        "settings": {
+          "additional-proto-dirs": []
+        }
+      }
+    },
+		"highlight.trace": "off",
+		// "html.filetypes": ["html"],
+		// "html.completion.attributeDefaultValue": "singlequotes",
+		// "html.autoClosingTags": false,
+		// "html.validate.styles": false,
 }
