@@ -7,19 +7,34 @@ return {
   config = function()
     require('mason').setup()
     local registry = require('mason-registry')
-    local success, package = pcall(registry.get_package, 'lua-language-server')
-    if success and not package:is_installed() then
-      package:install()
+
+    local function setup_ls (mason_ls_name, lspconfig_name, conf)
+      local success, package = pcall(registry.get_package, mason_ls_name)
+      if not success then
+        vim.notify(string.format('Fail to find Mason package: %s', mason_ls_name), vim.log.levels.ERROR)
+        return
+      end
+      if success and not package:is_installed() then
+        vim.notify(string.format('install %s via Mason', mason_ls_name), vim.log.levels.INFO)
+        package:install()
+      end
+      vim.lsp.config(lspconfig_name, conf or {})
+      vim.lsp.enable(lspconfig_name)
     end
-    vim.lsp.config('lua_ls', {
-      settings = {
-        Lua = {
-          diagnostics = {
-            globals = {'vim'}
+
+    -- lua
+    setup_ls('lua-language-server', 'lua_ls', {
+        settings = {
+          Lua = {
+            diagnostics = {
+              globals = {'vim'}
+            }
           }
         }
-      }
     })
-    vim.lsp.enable 'lua_ls'
+
+    -- go
+    setup_ls('gopls', 'gopls')
+
   end
 }

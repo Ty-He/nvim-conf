@@ -8,7 +8,7 @@ return {
   opts = {
     completion = {
       documentation = {
-        auto_show = true
+        auto_show = true,
       },
       list = {
         selection = {
@@ -19,7 +19,7 @@ return {
     },
     keymap = {
       -- preset = 'super-tab'
-      -- ['<C-space>'] = { 'show', 'show_documentation', 'hide_documentation' },
+      ['<C-space>'] = { 'show', 'show_documentation', 'hide_documentation' },
       ['<C-e>'] = { 'hide', 'fallback' },
       ['<C-y>'] = { 'select_and_accept', 'fallback' },
 
@@ -31,17 +31,14 @@ return {
       ['<C-b>'] = { 'scroll_documentation_up', 'fallback' },
       ['<C-f>'] = { 'scroll_documentation_down', 'fallback' },
 
-      ['<Up>'] = { 'snippet_forward', 'fallback' },
-      ['<Down>'] = { 'snippet_backward', 'fallback' },
+      ['<C-]>'] = { 'snippet_forward', 'fallback' },
+      ['<C-[>'] = { 'snippet_backward', 'fallback' },
 
       ['<C-k>'] = { 'show_signature', 'hide_signature', 'fallback' },
 
     },
     signature = {
       enabled = true
-    },
-    sources = {
-      default = {'path', 'snippets', 'buffer', 'lsp'}
     },
     cmdline = {
       keymap = { preset = 'inherit' },

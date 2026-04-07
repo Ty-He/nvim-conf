@@ -21,7 +21,10 @@ require('lazy').setup({
   spec = {
     { import = 'plugins' }
   },
-  git = { url_format = 'git@github.com:%s.git'},
+  git = {
+    url_format = 'git@github.com:%s.git',
+    timeout = 300, -- 5min 
+  },
   ui = {
     icons = {
       cmd = "⌘",
