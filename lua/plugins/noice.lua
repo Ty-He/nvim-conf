@@ -39,6 +39,11 @@ return {
       fps = 60,
       render = "wrapped-compact",
     })
+    -- C-x : Dismiss all notification windows currently displayed
+    vim.keymap.set("n", "<C-x>", function ()
+      require('notify').dismiss()
+    end, {silent = true})
     require("noice").setup(opts)
-  end
+  end,
+  keys = {}
 }

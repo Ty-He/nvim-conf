@@ -1,5 +1,5 @@
 vim.opt.number = true
-vim.opt.relativenumber = true
+-- vim.opt.relativenumber = true
 vim.opt.cursorline = true
 -- vim.opt.colorcolumn = "100"
 
@@ -18,8 +18,28 @@ vim.opt.splitright = true
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
+-- vim.opt.background = 'light'
+
+vim.opt.jumpoptions = 'stack'
+
+vim.opt.winborder = 'rounded'
+
+local ssh_tty = vim.fn.getenv('SSH_TTY')
+if ssh_tty ~= vim.NIL then
+  vim.g.clipboard = {
+    name = 'OSC 52',
+    copy = {
+      ['+'] = require('vim.ui.clipboard.osc52').copy('+'),
+      ['*'] = require('vim.ui.clipboard.osc52').copy('*'),
+    },
+    paste = {
+      ['+'] = require('vim.ui.clipboard.osc52').paste('+'),
+      ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
+    },
+  }
+end
+
 require('config.keymap')
 require('config.lazy')
 require('config.lsp')
 -- print("Hello, ty!")
-

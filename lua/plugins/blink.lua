@@ -7,9 +7,14 @@ return {
   event = { 'BufReadPost', 'BufNewFile'},
   opts = {
     completion = {
+      menu = { border = 'single' },
       documentation = {
         auto_show = true,
+        -- window = { border = 'single' },
       },
+      -- ghost_text = {
+      --   enabled = true,
+      -- },
       list = {
         selection = {
           preselect = false,
@@ -38,7 +43,8 @@ return {
 
     },
     signature = {
-      enabled = true
+      enabled = true,
+      -- window = { border = 'single' }
     },
     cmdline = {
       keymap = { preset = 'inherit' },

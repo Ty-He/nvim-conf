@@ -12,3 +12,5 @@ vim.keymap.set('n', '<A-l>', "<C-w>l", {noremap = true, silent = true})
 
 vim.keymap.set('n', ';', "0", {noremap = true, silent = true})
 vim.keymap.set('n', "'", "$", {noremap = true, silent = true})
+
+vim.keymap.set('n', '<leader><space>', '<cmd>nohl<CR>', {noremap = true})

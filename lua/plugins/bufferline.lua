@@ -5,12 +5,14 @@ return {
   opts = {
     options = {
       -- diagnostics = 'nvim_lsp',
-      -- mode = 'tabs',
-      numbers = 'ordinal',
+      mode = 'tabs',
+      -- numbers = 'ordinal',
       indicator = {
           icon = '▎', -- this should be omitted if indicator style is not 'icon'
           style = 'underline',
       },
+      show_buffer_close_icons = false,
+      always_show_bufferline = false,
     }
   },
   keys = {

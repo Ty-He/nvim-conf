@@ -7,15 +7,16 @@ return {
       light = "latte",
       dark = "frappe",
     },
-    -- transparent_background = true,
+    transparent_background = true,
     float = {
       solid = true
     },
+    term_colors = true,
     integrations = {
-      notify = true
+      notify = true,
     },
     dim_inactive = {
-      enable = true
+      enable = false
     }
   },
   config = function (_, opts)
